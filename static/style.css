@@ -1,0 +1,502 @@
+/* =========================================================
+   FC26 Pack Opener — style.css
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #c89b3c;
+  --gold-light: #f0d080;
+  --gold-dark: #8a6a1a;
+  --bg: #0a0a14;
+  --bg2: #12121f;
+  --bg3: #1a1a2e;
+  --surface: #1e1e35;
+  --surface2: #252540;
+  --text: #e8e8f0;
+  --text2: #9090b0;
+  --accent: #4a90d9;
+  --green: #48bb78;
+  --red: #fc5c5c;
+  --radius: 12px;
+  --card-w: 180px;
+  --card-h: 260px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---- Header ---- */
+header {
+  background: linear-gradient(135deg, #0d1117 0%, #1a1a2e 100%);
+  border-bottom: 1px solid rgba(200,155,60,0.3);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+}
+.header-badge {
+  background: rgba(200,155,60,0.15);
+  border: 1px solid rgba(200,155,60,0.4);
+  color: var(--gold-light);
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Layout ---- */
+.main-layout {
+  display: flex;
+  gap: 0;
+  min-height: calc(100vh - 60px);
+}
+
+/* ---- Pannello configurazione ---- */
+.config-panel {
+  width: 280px;
+  min-width: 280px;
+  background: var(--bg2);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.config-section h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.field-group label {
+  font-size: 0.78rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+.field-group input[type="number"],
+.field-group select {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field-group input[type="number"]:focus,
+.field-group select:focus {
+  border-color: var(--gold);
+}
+
+.range-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.range-row .field-group { flex: 1; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+.toggle-row span {
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--surface2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 2px;
+  background: var(--text2);
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+.toggle input:checked + .toggle-slider { background: rgba(200,155,60,0.3); border-color: var(--gold-dark); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--gold); }
+
+/* Pool info */
+.pool-info {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: var(--text2);
+}
+.pool-info strong { color: var(--gold-light); font-size: 1.1rem; }
+
+/* Bottone apri pacchetto */
+#btn-open {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #0a0a14;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  cursor: pointer;
+  width: 100%;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: auto;
+}
+#btn-open:hover { opacity: 0.9; transform: translateY(-1px); }
+#btn-open:active { transform: translateY(0); }
+#btn-open:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ---- Area gioco ---- */
+.play-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  min-height: 500px;
+}
+
+/* Stato iniziale */
+.idle-state {
+  text-align: center;
+  color: var(--text2);
+}
+.idle-state .pack-icon {
+  font-size: 5rem;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+.idle-state p { font-size: 1rem; }
+
+/* ---- Griglia carte ---- */
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  max-width: 1000px;
+}
+
+/* ---- Card flip container ---- */
+.card-wrapper {
+  width: var(--card-w);
+  height: var(--card-h);
+  perspective: 900px;
+  cursor: pointer;
+}
+
+.card-inner {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.card-wrapper.revealed .card-inner { transform: rotateY(0deg); }
+
+/* Face comune */
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ---- Retro carta ---- */
+.card-back {
+  background: linear-gradient(145deg, #1a1a3e 0%, #0d0d20 100%);
+  border: 2px solid rgba(200,155,60,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateY(180deg);
+}
+.card-back .back-logo {
+  font-size: 2.5rem;
+  opacity: 0.6;
+}
+.card-back::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(200,155,60,0.2);
+  border-radius: 10px;
+}
+
+/* ---- Fronte carta (stile FC) ---- */
+.card-front {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #1b2a4a 0%, #0e1926 100%);
+  border: 2px solid rgba(200,155,60,0.5);
+  position: relative;
+}
+
+/* Colori carta per tier OVR */
+.card-front.tier-elite {
+  background: linear-gradient(160deg, #2a1f0a 0%, #1a1200 100%);
+  border-color: var(--gold);
+}
+.card-front.tier-high {
+  background: linear-gradient(160deg, #1f2a1f 0%, #0e1a0e 100%);
+  border-color: rgba(72,187,120,0.6);
+}
+.card-front.tier-mid {
+  background: linear-gradient(160deg, #1a2535 0%, #0d1520 100%);
+  border-color: rgba(74,144,217,0.5);
+}
+.card-front.tier-low {
+  background: linear-gradient(160deg, #251a30 0%, #150e1e 100%);
+  border-color: rgba(130,100,160,0.5);
+}
+
+/* Header carta */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 10px 4px;
+}
+.card-ovr {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold-light);
+  text-shadow: 0 0 10px rgba(200,155,60,0.5);
+}
+.card-pos {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  opacity: 0.9;
+  text-align: right;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* Immagine giocatore */
+.card-img-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.card-img-wrap img {
+  height: 110px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+}
+.card-img-wrap .nation-flag {
+  position: absolute;
+  bottom: 4px;
+  left: 8px;
+  font-size: 1.1rem;
+}
+
+/* Nome giocatore */
+.card-name {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 4px 6px 2px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-club {
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--text2);
+  padding: 0 6px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Separatore dorato */
+.card-divider {
+  height: 1px;
+  background: rgba(200,155,60,0.25);
+  margin: 0 8px;
+}
+
+/* Stats nella carta */
+.card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3px 0;
+  padding: 6px 8px 8px;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-val {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--gold-light);
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 0.5rem;
+  color: var(--text2);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* ---- Badge "REVEAL ALL" ---- */
+#btn-reveal-all {
+  background: rgba(200,155,60,0.12);
+  border: 1px solid rgba(200,155,60,0.35);
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+#btn-reveal-all:hover { background: rgba(200,155,60,0.22); }
+#btn-reveal-all.hidden { display: none; }
+
+/* ---- Effetto particelle di sfondo ---- */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: float-up linear infinite;
+  opacity: 0;
+}
+@keyframes float-up {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+}
+
+/* ---- Animazione apertura pack ---- */
+@keyframes card-appear {
+  0%   { transform: translateY(40px) scale(0.8); opacity: 0; }
+  60%  { transform: translateY(-6px) scale(1.03); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.card-wrapper {
+  animation: card-appear 0.5s ease both;
+}
+
+/* ---- Flash di luce su reveal ---- */
+@keyframes shine {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+.card-shine {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255,220,100,0.5) 0%, transparent 70%);
+  border-radius: 14px;
+  pointer-events: none;
+  animation: shine 0.8s ease forwards;
+  z-index: 10;
+}
+
+/* ---- Messaggio errore ---- */
+.error-msg {
+  background: rgba(252,92,92,0.1);
+  border: 1px solid rgba(252,92,92,0.4);
+  color: var(--red);
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 0.85rem;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* ---- Loader ---- */
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--gold-light);
+}
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(200,155,60,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .main-layout { flex-direction: column; }
+  .config-panel { width: 100%; min-width: unset; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  :root { --card-w: 150px; --card-h: 216px; }
+}
