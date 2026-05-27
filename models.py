@@ -35,14 +35,22 @@ class PackConfig:
     ovr_max: int = 82
     num_cards: int = 5
     include_gk: bool = True
+    position_filter: str = ""          # es. "ST", "CB", "GK" — vuoto = tutti
+    min_stats: Dict[str, int] = field(default_factory=dict)   # {"PAC": 70, ...}
+    excluded_ids: List[int] = field(default_factory=list)      # IDs rose escluse
 
     @classmethod
     def from_dict(cls, data: dict) -> "PackConfig":
+        raw_stats = data.get("min_stats", {})
+        min_stats = {k: int(v) for k, v in raw_stats.items() if int(v) > 0}
         return cls(
             ovr_min=int(data.get("ovr_min", 75)),
             ovr_max=int(data.get("ovr_max", 82)),
             num_cards=min(max(int(data.get("num_cards", 5)), 1), 20),
             include_gk=bool(data.get("include_gk", True)),
+            position_filter=str(data.get("position_filter", "")).strip(),
+            min_stats=min_stats,
+            excluded_ids=[int(i) for i in data.get("excluded_ids", [])],
         )
 
     def validate(self) -> str | None:

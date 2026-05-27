@@ -5,14 +5,10 @@ from typing import List
 
 from flask import Flask, jsonify, request, send_from_directory
 from models import Player, PackConfig
-from pack_generator import generate_pack
+from pack_generator import generate_pack, filter_pool
 
-# ---------------------------------------------------------------------------
-# App e database
-# ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).parent
 app = Flask(__name__, static_folder=str(BASE_DIR / "static"))
-
 DATA_PATH = BASE_DIR / "data" / "players.json"
 
 
@@ -25,9 +21,7 @@ def _load_players() -> List[Player]:
 PLAYERS: List[Player] = _load_players()
 print(f"[FC26] Database caricato: {len(PLAYERS)} giocatori")
 
-# ---------------------------------------------------------------------------
-# API
-# ---------------------------------------------------------------------------
+
 @app.get("/api/pack/config")
 def get_default_config():
     overalls = [p.overall for p in PLAYERS]
@@ -41,24 +35,31 @@ def get_default_config():
     })
 
 
+@app.post("/api/pack/pool")
+def get_pool_size():
+    """Restituisce il numero di giocatori disponibili con la config specificata."""
+    data = request.get_json(force=True) or {}
+    config = PackConfig.from_dict(data)
+    error = config.validate()
+    if error:
+        return jsonify({"error": error}), 400
+    pool = filter_pool(PLAYERS, config)
+    return jsonify({"pool_size": len(pool)})
+
+
 @app.post("/api/pack/open")
 def open_pack():
     data = request.get_json(force=True) or {}
     config = PackConfig.from_dict(data)
-
     error = config.validate()
     if error:
         return jsonify({"error": error}), 400
 
-    pool_size = sum(
-        1 for p in PLAYERS
-        if config.ovr_min <= p.overall <= config.ovr_max
-        and (config.include_gk or not p.is_gk)
-    )
+    pool = filter_pool(PLAYERS, config)
+    pool_size = len(pool)
 
     if pool_size == 0:
-        return jsonify({"error": f"Nessun giocatore trovato nel range OVR {config.ovr_min}–{config.ovr_max}"}), 404
-
+        return jsonify({"error": f"Nessun giocatore trovato con i filtri applicati"}), 404
     if pool_size < config.num_cards:
         return jsonify({
             "error": f"Pool insufficiente: {pool_size} giocatori disponibili, richiesti {config.num_cards}"
@@ -72,24 +73,24 @@ def open_pack():
             "ovr_max": config.ovr_max,
             "num_cards": config.num_cards,
             "include_gk": config.include_gk,
+            "position_filter": config.position_filter,
+            "min_stats": config.min_stats,
         },
         "total_available": pool_size,
     })
 
 
-@app.get("/api/players/stats")
-def player_stats():
-    from collections import Counter
-    counter = Counter(p.overall for p in PLAYERS)
-    return jsonify({
-        "distribution": {str(k): v for k, v in sorted(counter.items(), reverse=True)},
-        "total": len(PLAYERS),
-    })
+@app.get("/api/players/positions")
+def get_positions():
+    """Lista di tutte le posizioni disponibili nel DB."""
+    positions = set()
+    for p in PLAYERS:
+        for pos in p.positions_all.split(','):
+            positions.add(pos.strip())
+    ordered = sorted(positions)
+    return jsonify({"positions": ordered})
 
 
-# ---------------------------------------------------------------------------
-# Serve frontend
-# ---------------------------------------------------------------------------
 @app.get("/")
 def index():
     return send_from_directory(str(BASE_DIR / "static"), "index.html")
@@ -101,4 +102,6 @@ def static_files(filename: str):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FC26 Pack Opener</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <header>
+    <h1>⚽ FC26 PACK OPENER</h1>
+    <span class="header-badge">LIVE</span>
+  </header>
+
+  <div class="main-layout">
+
+    <!-- ===== PANNELLO CONFIGURAZIONE ===== -->
+    <aside class="config-panel">
+
+      <!-- Range Overall -->
+      <div class="config-section">
+        <h3>Range Overall</h3>
+        <div class="range-row">
+          <div class="field-group">
+            <label for="inp-ovr-min">Min OVR</label>
+            <input type="number" id="inp-ovr-min" value="75" min="47" max="91" step="1">
+          </div>
+          <div class="field-group">
+            <label for="inp-ovr-max">Max OVR</label>
+            <input type="number" id="inp-ovr-max" value="82" min="47" max="91" step="1">
+          </div>
+        </div>
+        <div class="info-box">⚡ OVR più alto = priorità maggiore nell'estrazione</div>
+      </div>
+
+      <!-- Filtri Avanzati (collapsibile) -->
+      <div class="config-section">
+        <h3 class="section-toggle" onclick="toggleSection('adv-filters','arrow-adv')">
+          Filtri Avanzati
+          <span class="arrow" id="arrow-adv">▶</span>
+        </h3>
+        <div id="adv-filters" class="collapsible hidden">
+
+          <!-- Ruolo -->
+          <div class="field-group" style="margin-bottom:14px">
+            <label for="sel-position">Ruolo</label>
+            <select id="sel-position">
+              <option value="">Tutti i ruoli</option>
+              <optgroup label="Portieri">
+                <option value="GK">GK — Portiere</option>
+              </optgroup>
+              <optgroup label="Difensori">
+                <option value="CB">CB — Difensore Centrale</option>
+                <option value="LB">LB — Terzino Sinistro</option>
+                <option value="RB">RB — Terzino Destro</option>
+                <option value="LWB">LWB — Ala Difensiva Sin.</option>
+                <option value="RWB">RWB — Ala Difensiva Des.</option>
+              </optgroup>
+              <optgroup label="Centrocampisti">
+                <option value="CDM">CDM — Mediano</option>
+                <option value="CM">CM — Centrocampista</option>
+                <option value="CAM">CAM — Trequartista</option>
+                <option value="LM">LM — Centrocampista Sin.</option>
+                <option value="RM">RM — Centrocampista Des.</option>
+              </optgroup>
+              <optgroup label="Attaccanti">
+                <option value="LW">LW — Ala Sinistra</option>
+                <option value="RW">RW — Ala Destra</option>
+                <option value="CF">CF — Prima Punta</option>
+                <option value="ST">ST — Centravanti</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Stat minime -->
+          <div class="stat-filters-label">Stats minime <span id="stat-type-label">(outfield)</span></div>
+          <div class="stat-filters-grid" id="stat-filters-grid">
+            <!-- populated by JS -->
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Pacchetto -->
+      <div class="config-section">
+        <h3>Pacchetto</h3>
+        <div class="field-group">
+          <label for="inp-num-cards">Numero di carte</label>
+          <input type="number" id="inp-num-cards" value="5" min="1" max="20" step="1">
+        </div>
+        <div class="toggle-row">
+          <span>Includi portieri</span>
+          <label class="toggle">
+            <input type="checkbox" id="tog-gk" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Rose escluse -->
+      <div class="config-section">
+        <h3 class="section-toggle" onclick="toggleSection('roster-section','arrow-roster')">
+          Rose Escluse
+          <span class="arrow" id="arrow-roster">▶</span>
+        </h3>
+        <div id="roster-section" class="collapsible hidden">
+          <p class="hint-text">Carica file .json con la rosa della tua squadra per escludere quei giocatori dai pacchetti.</p>
+          <label class="upload-btn" id="upload-btn-label">
+            📂 Carica Rosa (.json)
+            <input type="file" id="roster-upload" accept=".json" multiple>
+          </label>
+          <div id="roster-list"></div>
+          <div id="excluded-count" class="excluded-count hidden"></div>
+        </div>
+      </div>
+
+      <!-- Pool disponibile -->
+      <div class="config-section">
+        <h3>Pool Disponibile</h3>
+        <div class="pool-info" id="pool-count">Calcolo...</div>
+      </div>
+
+      <button id="btn-open">🎁 APRI PACCHETTO</button>
+
+    </aside>
+
+    <!-- ===== AREA GIOCO ===== -->
+    <main class="play-area" id="play-area">
+      <div class="idle-state">
+        <div class="pack-icon">🎁</div>
+        <p>Configura il pacchetto e premi<br><strong>APRI PACCHETTO</strong> per iniziare</p>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- html2canvas per la condivisione immagine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
